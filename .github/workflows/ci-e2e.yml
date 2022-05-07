@@ -1,0 +1,50 @@
+name: CI - E2E
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  main:
+    name: Cypress
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    strategy:
+      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      matrix:
+        containers: [ 1, 2, 3, 4, 5 ]
+    steps:
+      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+
+      - uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - run: npm ci
+
+      - uses: cypress-io/github-action@16aacf8ea6a67e5e5d907d34bc3be8ad0e6e979f
+        with:
+          install: false
+          record: true
+          parallel: true
+          build: npm run cypress:build
+          start: npm run start
+          wait-on: 'http://localhost:3000'
+          browser: chrome
+          spec: cypress/integration/**
+          tag: ${{ github.event_name }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: codecov/codecov-action@e3c560433a6cc60aec8812599b7844a7b4fa0d71
