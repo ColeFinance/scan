@@ -9,7 +9,7 @@ jobs:
   jellyfish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854
         with:
           node-version: 16
@@ -38,7 +38,7 @@ jobs:
   whale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - uses: actions/setup-node@56337c425554a6be30cdef71bf441f15be286854
         with:
           node-version: 16
